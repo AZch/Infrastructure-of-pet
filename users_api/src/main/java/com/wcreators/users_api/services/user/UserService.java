@@ -1,4 +1,4 @@
-package com.wcreators.users_api.services;
+package com.wcreators.users_api.services.user;
 
 import com.wcreators.users_api.constants.Roles;
 import com.wcreators.users_api.dto.RegistrationRequestDTO;
@@ -17,27 +17,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public Optional<User> saveUser(RegistrationRequestDTO registrationRequestDTO) {
-        Role role = roleRepository
-                .findByName(Roles.USER.getName())
-                .orElseGet(() -> roleRepository.save(Role.builder().name(Roles.USER.getName()).build()));
-        Optional<User> isUserExist = userRepository.findByUsername(registrationRequestDTO.getUsername());
-        if (isUserExist.isPresent()) {
-            return Optional.empty();
-        }
-        return Optional.of(
-                userRepository.save(
-                        User.builder()
-                                .username(registrationRequestDTO.getUsername())
-                                .password(passwordEncoder.encode(registrationRequestDTO.getPassword()))
-                                .role(role)
-                                .build()
-                )
-        );
-    }
 
     public Optional<User> findByUserName(String username) {
         return userRepository.findByUsername(username);

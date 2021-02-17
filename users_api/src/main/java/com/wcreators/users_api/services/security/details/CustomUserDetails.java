@@ -1,4 +1,4 @@
-package com.wcreators.users_api.security.details;
+package com.wcreators.users_api.services.security.details;
 
 import com.wcreators.users_api.entities.User;
 import lombok.AllArgsConstructor;

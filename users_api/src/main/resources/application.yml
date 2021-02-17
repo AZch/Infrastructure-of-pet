@@ -1,4 +1,11 @@
 spring:
+  kafka:
+    bootstrap-servers: ${kafka_bootstrap_servers:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+      group-id: example
+    producer:
+      client-id: example
   datasource:
     url: jdbc:mysql://localhost:3306/user_db?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
     username: root
@@ -16,3 +23,5 @@ server:
   port: 8082
 jwt:
   secret: testtoken
+messaging-topics:
+  user-created: true

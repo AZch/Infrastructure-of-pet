@@ -1,4 +1,4 @@
-package com.wcreators.users_api.security.details;
+package com.wcreators.users_api.services.security.details;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

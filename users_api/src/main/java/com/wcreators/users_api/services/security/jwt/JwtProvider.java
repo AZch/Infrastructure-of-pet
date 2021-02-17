@@ -1,4 +1,4 @@
-package com.wcreators.users_api.security.jwt;
+package com.wcreators.users_api.services.security.jwt;
 
 import com.wcreators.users_api.entities.User;
 import io.jsonwebtoken.*;
@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 @Log

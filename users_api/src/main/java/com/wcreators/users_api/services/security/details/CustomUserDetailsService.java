@@ -1,8 +1,8 @@
-package com.wcreators.users_api.security.details;
+package com.wcreators.users_api.services.security.details;
 
 import com.wcreators.users_api.entities.User;
 import com.wcreators.users_api.exceptions.EntityNotFoundException;
-import com.wcreators.users_api.services.UserService;
+import com.wcreators.users_api.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

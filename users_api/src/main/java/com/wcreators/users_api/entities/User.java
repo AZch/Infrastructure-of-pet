@@ -22,6 +22,8 @@ public class User {
 
     private String password;
 
+    private boolean deleted = false;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

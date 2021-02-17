@@ -1,8 +1,7 @@
-package com.wcreators.users_api.security.jwt;
+package com.wcreators.users_api.services.security.jwt;
 
-import com.wcreators.users_api.security.details.CustomUserDetails;
-import com.wcreators.users_api.security.details.CustomUserDetailsService;
-import com.wcreators.users_api.services.UserService;
+import com.wcreators.users_api.services.security.details.CustomUserDetails;
+import com.wcreators.users_api.services.security.details.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;

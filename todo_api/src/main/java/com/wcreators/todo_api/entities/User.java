@@ -18,6 +18,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private boolean deleted = false;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;

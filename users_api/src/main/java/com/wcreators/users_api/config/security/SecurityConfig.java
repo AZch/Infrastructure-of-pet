@@ -1,7 +1,7 @@
-package com.wcreators.users_api.security;
+package com.wcreators.users_api.config.security;
 
 import com.wcreators.users_api.constants.Routes;
-import com.wcreators.users_api.security.jwt.JwtFilter;
+import com.wcreators.users_api.services.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
