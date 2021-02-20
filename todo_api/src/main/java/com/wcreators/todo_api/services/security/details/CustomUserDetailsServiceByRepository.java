@@ -1,5 +1,6 @@
-package com.wcreators.todo_api.configs.security.details;
+package com.wcreators.todo_api.services.security.details;
 
+import com.wcreators.jwt_starter.services.details.CustomUserDetailsService;
 import com.wcreators.todo_api.exceptions.EntityNotFoundException;
 import com.wcreators.todo_api.services.user.UserService;
 import com.wcreators.todo_api.entities.User;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsServiceByRepository implements CustomUserDetailsService {
 
     private final UserService userService;
 

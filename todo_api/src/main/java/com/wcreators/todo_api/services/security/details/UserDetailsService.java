@@ -1,4 +1,4 @@
-package com.wcreators.todo_api.configs.security.details;
+package com.wcreators.todo_api.services.security.details;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

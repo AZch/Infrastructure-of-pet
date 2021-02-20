@@ -21,7 +21,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 server:
   port: 8082
-jwt:
-  secret: testtoken
+enable:
+  jwt: true
 messaging-topics:
   user-created: true

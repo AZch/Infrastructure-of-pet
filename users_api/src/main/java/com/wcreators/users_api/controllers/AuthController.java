@@ -1,5 +1,6 @@
 package com.wcreators.users_api.controllers;
 
+import com.wcreators.jwt_starter.services.jwt.JwtProvider;
 import com.wcreators.users_api.constants.Errors;
 import com.wcreators.users_api.constants.Routes;
 import com.wcreators.users_api.controllers.assemblers.AuthModelAssembler;
@@ -9,7 +10,6 @@ import com.wcreators.users_api.dto.AuthResponseDto;
 import com.wcreators.users_api.dto.RegistrationRequestDto;
 import com.wcreators.users_api.exceptions.BadRequestException;
 import com.wcreators.users_api.exceptions.EntityNotFoundException;
-import com.wcreators.users_api.services.security.jwt.JwtProvider;
 import com.wcreators.users_api.services.user.UserService;
 import com.wcreators.users_api.services.user.create.user_create.UserCreateService;
 import com.wcreators.users_api.services.user.create.user_create_produce.UserCreateProduceService;
@@ -47,7 +47,9 @@ public class AuthController {
     public EntityModel<AuthResponseDto> signIn(@RequestBody @Valid AuthRequestDto body) throws BadRequestException {
         val user = userService.findByUsernameAndPassword(body.getUsername(), body.getPassword())
                 .orElseThrow(() -> new BadRequestException(Errors.AuthError.USERNAME_OR_PASSWORD_INCORRECT));
-        val authResponseDTO = AuthResponseDto.builder().token(jwtProvider.generateToken(user)).build();
+        val jwtUser = mapper.userToJwtUser(user);
+        val token = jwtProvider.generateToken(jwtUser);
+        val authResponseDTO = AuthResponseDto.builder().token(token).build();
         return assembler.toModel(authResponseDTO);
     }
 

@@ -1,10 +1,9 @@
 package com.wcreators.todo_api.configs.security;
 
-import com.wcreators.todo_api.configs.security.jwt.JwtFilter;
+import com.wcreators.jwt_starter.services.jwt.JwtFilter;
 import com.wcreators.todo_api.constants.Roles;
 import com.wcreators.todo_api.constants.Routes;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

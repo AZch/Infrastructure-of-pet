@@ -1,9 +1,9 @@
 package com.wcreators.todo_api.controller_tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wcreators.todo_api.configs.security.details.CustomUserDetailsService;
-import com.wcreators.todo_api.configs.security.jwt.JwtFilter;
-import com.wcreators.todo_api.configs.security.jwt.JwtProvider;
+import com.wcreators.jwt_starter.services.jwt.JwtFilter;
+import com.wcreators.jwt_starter.services.jwt.JwtProvider;
+import com.wcreators.todo_api.services.security.details.CustomUserDetailsServiceByRepository;
 import com.wcreators.todo_api.constants.Roles;
 import com.wcreators.todo_api.constants.Routes;
 import com.wcreators.todo_api.controllers.assemblers.CollectionAssembler;
@@ -14,8 +14,6 @@ import com.wcreators.todo_api.dto.NoteRequestDto;
 import com.wcreators.todo_api.entities.Note;
 import com.wcreators.todo_api.entities.Role;
 import com.wcreators.todo_api.entities.User;
-import com.wcreators.todo_api.repositories.NoteRepository;
-import com.wcreators.todo_api.repositories.UserRepository;
 import com.wcreators.todo_api.services.note.NoteService;
 import com.wcreators.todo_api.services.user.UserService;
 import com.wcreators.todo_api.services.user.UserServiceByRepository;
@@ -28,14 +26,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.wcreators.todo_api.configs.security.jwt.JwtFilter.AUTHORIZATION;
-import static com.wcreators.todo_api.configs.security.jwt.JwtFilter.TOKEN_START_WITH;
+import static com.wcreators.jwt_starter.services.jwt.JwtFilter.AUTHORIZATION;
+import static com.wcreators.jwt_starter.services.jwt.JwtFilter.TOKEN_START_WITH;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -49,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         NoteMapper.class,
         JwtFilter.class,
         JwtProvider.class,
-        CustomUserDetailsService.class,
+        CustomUserDetailsServiceByRepository.class,
         UserServiceByRepository.class
 })
 public class NoteTest {

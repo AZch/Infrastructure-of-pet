@@ -1,6 +1,6 @@
-package com.wcreators.todo_api.common.servicies.user_from_auth;
+package com.wcreators.todo_api.services.security.user_from_auth;
 
-import com.wcreators.todo_api.configs.security.details.CustomUserDetails;
+import com.wcreators.todo_api.services.security.details.CustomUserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 

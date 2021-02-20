@@ -1,12 +1,12 @@
-package com.wcreators.users_api.services.security.jwt;
+package com.wcreators.jwt_starter.services.jwt;
 
-import com.wcreators.users_api.services.security.details.CustomUserDetailsService;
+import com.wcreators.jwt_starter.services.details.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -20,12 +20,11 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Service
 public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
     public static final String TOKEN_START_WITH = "Bearer ";
-
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService customUserDetailsService;
 

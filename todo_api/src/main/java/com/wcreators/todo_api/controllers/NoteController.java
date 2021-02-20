@@ -1,7 +1,7 @@
 package com.wcreators.todo_api.controllers;
 
-import com.wcreators.todo_api.common.servicies.user_from_auth.UserFromAuth;
-import com.wcreators.todo_api.configs.security.details.CustomUserDetails;
+import com.wcreators.todo_api.services.security.user_from_auth.UserFromAuth;
+import com.wcreators.todo_api.services.security.details.CustomUserDetails;
 import com.wcreators.todo_api.constants.Routes;
 import com.wcreators.todo_api.controllers.assemblers.CollectionAssembler;
 import com.wcreators.todo_api.controllers.assemblers.ModelAssembler;
