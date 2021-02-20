@@ -6,6 +6,5 @@ public class Routes {
 
         public static final String SIGN_IN = "/signin";
         public static final String SIGNUP = "/signup";
-        public static final String TEST = "/test";
     }
 }

@@ -2,10 +2,10 @@ package com.wcreators.users_api.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @Builder
-public class AuthResponseDTO {
-
-    private String token;
+public class AuthResponseDto {
+    String token;
 }

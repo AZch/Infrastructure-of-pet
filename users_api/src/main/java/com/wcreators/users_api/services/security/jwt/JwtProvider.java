@@ -2,7 +2,8 @@ package com.wcreators.users_api.services.security.jwt;
 
 import com.wcreators.users_api.entities.User;
 import io.jsonwebtoken.*;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +11,18 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
+@Slf4j
 @Component
-@Log
 public class JwtProvider {
 
-    @Value("$(jwt.secret)")
-    private String secret;
+    private final String secret;
+
+    public JwtProvider(@Value("$(jwt.secret)") String secret) {
+        this.secret = secret;
+    }
 
     public String generateToken(User user) {
-        Date date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        val date = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setAudience(user.getRole().getName())
                 .setId(user.getId().toString())
@@ -32,24 +36,24 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            log.severe("Token expired");
+            log.error("Token expired");
         } catch (UnsupportedJwtException unsEx) {
-            log.severe("Unsupported jwt");
+            log.error("Unsupported jwt");
         } catch (MalformedJwtException mjEx) {
-            log.severe("Malformed jwt");
+            log.error("Malformed jwt");
         } catch (Exception e) {
-            log.severe("Token invalid");
+            log.error("Token invalid");
         }
         return false;
     }
 
     public String getRoleFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return claims.getAudience();
     }
 
     public Long getIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return Long.valueOf(claims.getId());
     }
 }
