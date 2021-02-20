@@ -8,13 +8,12 @@ import com.wcreators.todo_api.controllers.assemblers.ModelAssembler;
 import com.wcreators.todo_api.controllers.mappers.NoteMapper;
 import com.wcreators.todo_api.dto.NoteRequestDto;
 import com.wcreators.todo_api.dto.NoteResponseDto;
-import com.wcreators.todo_api.entities.Note;
-import com.wcreators.todo_api.entities.User;
 import com.wcreators.todo_api.exceptions.EntityNotFoundException;
 import com.wcreators.todo_api.services.note.NoteService;
 import com.wcreators.todo_api.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -22,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,15 +34,15 @@ public class NoteController {
     private final ModelAssembler assembler;
     private final CollectionAssembler collectionAssembler;
     private final UserFromAuth userFromAuth;
-    private final NoteMapper noteMapper;
+    private final NoteMapper mapper;
 
     @GetMapping
     public CollectionModel<EntityModel<NoteResponseDto>> all() {
         CustomUserDetails customUserDetails = this.userFromAuth.getUserDetails();
-        List<EntityModel<NoteResponseDto>> notes = noteService
+        val notes = noteService
                 .allForUser(customUserDetails.getId())
                 .stream()
-                .map(noteMapper::toDto)
+                .map(mapper::toDto)
                 .map(assembler::toModel)
                 .collect(Collectors.toList());
         return collectionAssembler.toModel(notes);
@@ -53,23 +51,23 @@ public class NoteController {
     @GetMapping(Routes.Notes.GET_ONE)
     public EntityModel<NoteResponseDto> one(@PathVariable Long id) {
         CustomUserDetails customUserDetails = this.userFromAuth.getUserDetails();
-        Note note = noteService
+        val note = noteService
                 .getByIdForUser(id, customUserDetails.getId())
                 .orElseThrow(() -> new EntityNotFoundException("note", "id", id));
-        return assembler.toModel(noteMapper.toDto(note));
+        return assembler.toModel(mapper.toDto(note));
     }
 
     @PostMapping
     public ResponseEntity<EntityModel<NoteResponseDto>>  create(@RequestBody NoteRequestDto noteDto) {
         CustomUserDetails customUserDetails = userFromAuth.getUserDetails();
-        User user = userService
+        val user = userService
                 .getById(customUserDetails.getId())
                 .orElseThrow();
-        Note note = noteService.save(noteMapper.toDomain(noteDto));
+        val note = noteService.save(mapper.toDomain(noteDto));
         user.getNotes().add(note);
         userService.save(user);
 
-        EntityModel<NoteResponseDto> entityModel = assembler.toModel(noteMapper.toDto(note));
+        EntityModel<NoteResponseDto> entityModel = assembler.toModel(mapper.toDto(note));
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
@@ -77,13 +75,13 @@ public class NoteController {
 
     @PutMapping(Routes.Notes.EDIT)
     public ResponseEntity<EntityModel<NoteResponseDto>> editNote(@RequestBody NoteRequestDto noteDto, @PathVariable Long id) {
-        CustomUserDetails customUserDetails = userFromAuth.getUserDetails();
-        Note updatedNote = noteService
+        val customUserDetails = userFromAuth.getUserDetails();
+        val updatedNote = noteService
                 .getByIdForUser(id, customUserDetails.getId())
-                .map(note -> noteService.save(noteMapper.replaceFromDto(note, noteDto)))
+                .map(note -> noteService.save(mapper.replaceFromDto(note, noteDto)))
                 .orElseThrow(() -> new EntityNotFoundException("note", "id", id));
 
-        EntityModel<NoteResponseDto> entityModel = assembler.toModel(noteMapper.toDto(updatedNote));
+        val entityModel = assembler.toModel(mapper.toDto(updatedNote));
 
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
@@ -93,10 +91,10 @@ public class NoteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(Routes.Notes.DELETE)
     public void deleteNote(@PathVariable Long id) {
-        CustomUserDetails customUserDetails = userFromAuth.getUserDetails();
+        val customUserDetails = userFromAuth.getUserDetails();
         noteService
                 .getByIdForUser(id, customUserDetails.getId())
-                .map(note -> noteService.save(noteMapper.markDeleted(note)))
+                .map(note -> noteService.save(mapper.markDeleted(note)))
                 .orElseThrow(() -> new EntityNotFoundException("note", "id", id));
     }
 

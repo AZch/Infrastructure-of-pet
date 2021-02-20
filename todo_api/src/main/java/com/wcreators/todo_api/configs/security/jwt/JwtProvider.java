@@ -1,7 +1,9 @@
 package com.wcreators.todo_api.configs.security.jwt;
 
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,8 +11,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class JwtProvider {
 
-    @Value("$(jwt.secret)")
-    private String secret;
+    private final String secret;
+
+    public JwtProvider(@Value("$(jwt.secret)") String secret) {
+        this.secret = secret;
+    }
 
     public boolean validateToken(String token) {
         try {
@@ -29,12 +34,12 @@ public class JwtProvider {
     }
 
     public String getRoleFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return claims.getAudience();
     }
 
     public Long getIdFromToken(String token) {
-        Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+        val claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
         return Long.valueOf(claims.getId());
     }
 }
