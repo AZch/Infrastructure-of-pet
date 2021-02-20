@@ -1,12 +1,12 @@
 package com.wcreators.todo_api.configs.security.jwt;
 
 import io.jsonwebtoken.*;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-@Log
+@Slf4j
 public class JwtProvider {
 
     @Value("$(jwt.secret)")
@@ -17,13 +17,13 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-//            log.severe("Token expired");
+            log.error("Token expired");
         } catch (UnsupportedJwtException unsEx) {
-//            log.severe("Unsupported jwt");
+            log.error("Unsupported jwt");
         } catch (MalformedJwtException mjEx) {
-//            log.severe("Malformed jwt");
+            log.error("Malformed jwt");
         } catch (Exception e) {
-//            log.severe("Token invalid");
+            log.error("Token invalid");
         }
         return false;
     }

@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  zookeeper-server:
+    image: azch97/zookeeper:latest
+    networks:
+      - kafka-network
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+      - ZOOKEEPER_SYNC_LIMIT=2
+  kafka-server:
+    image: azch97/kafka:latest
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper-server
+    networks:
+      - kafka-network
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper-server:2181
+    links:
+      - zookeeper-server
+networks:
+  kafka-network:
+    driver: bridge

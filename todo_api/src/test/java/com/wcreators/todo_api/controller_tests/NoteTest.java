@@ -6,16 +6,19 @@ import com.wcreators.todo_api.configs.security.jwt.JwtFilter;
 import com.wcreators.todo_api.configs.security.jwt.JwtProvider;
 import com.wcreators.todo_api.constants.Roles;
 import com.wcreators.todo_api.constants.Routes;
-import com.wcreators.todo_api.controllers.CollectionAssembler;
-import com.wcreators.todo_api.controllers.ModelAssembler;
+import com.wcreators.todo_api.controllers.assemblers.CollectionAssembler;
+import com.wcreators.todo_api.controllers.assemblers.ModelAssembler;
 import com.wcreators.todo_api.controllers.NoteController;
-import com.wcreators.todo_api.dto.NoteDto;
+import com.wcreators.todo_api.controllers.mappers.NoteMapper;
+import com.wcreators.todo_api.dto.NoteRequestDto;
 import com.wcreators.todo_api.entities.Note;
 import com.wcreators.todo_api.entities.Role;
 import com.wcreators.todo_api.entities.User;
 import com.wcreators.todo_api.repositories.NoteRepository;
 import com.wcreators.todo_api.repositories.UserRepository;
-import com.wcreators.todo_api.services.UserService;
+import com.wcreators.todo_api.services.note.NoteService;
+import com.wcreators.todo_api.services.user.UserService;
+import com.wcreators.todo_api.services.user.UserServiceByRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.Nested;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,36 +46,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({
         ModelAssembler.class,
         CollectionAssembler.class,
+        NoteMapper.class,
         JwtFilter.class,
         JwtProvider.class,
         CustomUserDetailsService.class,
-        UserService.class
+        UserServiceByRepository.class
 })
 public class NoteTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private JwtProvider jwtProvider;
+    @MockBean
+    private NoteService noteService;
 
     @MockBean
-    private NoteRepository noteRepository;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @PostConstruct
-    public void init() {
-
-    }
+    private UserService userService;
 
     @Nested
     class GetAll {
         @Test
         public void shouldFindNoNotesIfRepositoryIsEmpty() throws Exception {
             prepareUserToTesting();
-            when(noteRepository.findAllByUsersIdAndDeletedFalse(1L)).thenReturn(new ArrayList<>());
+            when(noteService.allForUser(1L)).thenReturn(new ArrayList<>());
 
             mockMvc
                     .perform(get(Routes.Notes.BASE).header(AUTHORIZATION, String.format("%s%s", TOKEN_START_WITH, "")))
@@ -87,7 +83,7 @@ public class NoteTest {
                     Note.builder().id(1L).title("1T").content("1C").build(),
                     Note.builder().id(2L).title("2T").content("2C").build()
             );
-            when(noteRepository.findAllByUsersIdAndDeletedFalse(1L)).thenReturn(noteList);
+            when(noteService.allForUser(1L)).thenReturn(noteList);
 
             mockMvc
                     .perform(get(Routes.Notes.BASE).header(AUTHORIZATION, String.format("%s%s", TOKEN_START_WITH, "")))
@@ -113,7 +109,7 @@ public class NoteTest {
                     .title("title")
                     .content("content")
                     .build();
-            when(noteRepository.findByIdAndUsersIdAndDeletedFalse(note.getId(), 1L)).thenReturn(Optional.of(note));
+            when(noteService.getByIdForUser(note.getId(), 1L)).thenReturn(Optional.of(note));
 
             mockMvc
                     .perform(get(String.format("%s/1", Routes.Notes.BASE)).header(AUTHORIZATION, String.format("%s%s", TOKEN_START_WITH, "")))
@@ -129,7 +125,7 @@ public class NoteTest {
         @Test
         public void shouldCreateNote() throws Exception {
             prepareUserToTesting();
-            NoteDto actualNote = NoteDto.builder()
+            NoteRequestDto actualNote = NoteRequestDto.builder()
                     .title("title")
                     .content("content")
                     .build();
@@ -140,7 +136,7 @@ public class NoteTest {
                     .content(actualNote.getContent())
                     .build();
 
-            when(noteRepository.save(
+            when(noteService.save(
                     Note.builder()
                             .title(actualNote.getTitle())
                             .content(actualNote.getContent())
@@ -171,7 +167,7 @@ public class NoteTest {
                     .title("title")
                     .content("content")
                     .build();
-            NoteDto noteDto = NoteDto.builder()
+            NoteRequestDto noteDto = NoteRequestDto.builder()
                     .title("new title")
                     .content(note.getContent())
                     .build();
@@ -182,8 +178,8 @@ public class NoteTest {
                     .content(note.getContent())
                     .build();
 
-            when(noteRepository.findByIdAndUsersIdAndDeletedFalse(note.getId(), 1L)).thenReturn(Optional.of(note));
-            when(noteRepository.save(note.withTitle("new title"))).thenReturn(expectedNote);
+            when(noteService.getByIdForUser(note.getId(), 1L)).thenReturn(Optional.of(note));
+            when(noteService.save(note.withTitle("new title"))).thenReturn(expectedNote);
 
             mockMvc
                     .perform(
@@ -206,9 +202,9 @@ public class NoteTest {
             prepareUserToTesting();
             Note note = Note.builder().id(1L).title("").content("").build();
 
-            when(noteRepository.findByIdAndUsersIdAndDeletedFalse(note.getId(), 1L)).thenReturn(Optional.of(note));
+            when(noteService.getByIdForUser(note.getId(), 1L)).thenReturn(Optional.of(note));
             Note deletedNote = note.withDeleted(true);
-            when(noteRepository.save(deletedNote)).thenReturn(deletedNote);
+            when(noteService.save(deletedNote)).thenReturn(deletedNote);
 
             mockMvc
                     .perform(delete(String.format("%s/1", Routes.Notes.BASE)).header(AUTHORIZATION, String.format("%s%s", TOKEN_START_WITH, "")))
@@ -217,7 +213,7 @@ public class NoteTest {
     }
 
     private void prepareUserToTesting() {
-        when(userRepository.findByIdAndRoleName(1L, "USER")).thenReturn(
+        when(userService.getByIdAndRole(1L, "USER")).thenReturn(
                 Optional.of(
                         User.builder()
                                 .id(1L)

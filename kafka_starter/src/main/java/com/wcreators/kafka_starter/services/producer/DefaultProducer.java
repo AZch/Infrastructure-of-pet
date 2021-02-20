@@ -3,11 +3,13 @@ package com.wcreators.kafka_starter.services.producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@ConditionalOnProperty(name = "spring.kafka.bootstrap-servers")
 @Service
 public class DefaultProducer implements Producer {
 
